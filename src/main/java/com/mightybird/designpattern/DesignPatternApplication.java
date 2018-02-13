@@ -18,6 +18,8 @@ import com.mightybird.designpattern.creational.simplefactory.shapes.Shape;
 import com.mightybird.designpattern.creational.singleton.eagersingleton.EagerThread;
 import com.mightybird.designpattern.creational.singleton.iodhsingleton.IoDHThread;
 import com.mightybird.designpattern.creational.singleton.lazysingleton.LazyThread;
+import com.mightybird.designpattern.structural.adapter.Adapter;
+import com.mightybird.designpattern.structural.adapter.Target;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -32,16 +34,30 @@ public class DesignPatternApplication {
         ConfigurableApplicationContext context = SpringApplication.run(DesignPatternApplication.class, args);
 
 //        Creational Clients
-//        simpleFactoryClient(context);
-//        factoryMethodClient(context);
-//        abstractFactoryClient(context);
+        simpleFactoryClient(context);
+        factoryMethodClient(context);
+        abstractFactoryClient(context);
         singletonClient();
-//        prototypeClient();
-//        builderClient(context);
+        prototypeClient();
+        builderClient(context);
 
 //        Structural Clients
+        adapterClient(context, "username");
 
 //        Behavioral Clients
+    }
+
+    private static void adapterClient(ConfigurableApplicationContext context, String str) {
+        String className = context.getEnvironment().getProperty("adapter.adapterClassName");
+        Target target = null;
+        try {
+            Class<?> adapterClass = Class.forName(className);
+            target = (Adapter) adapterClass.getDeclaredConstructor().newInstance();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        assert target != null;
+        System.out.println(target.encryptUserPass(str));
     }
 
     private static void builderClient(ConfigurableApplicationContext context) {
