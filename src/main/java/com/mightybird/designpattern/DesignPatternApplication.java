@@ -20,6 +20,11 @@ import com.mightybird.designpattern.creational.singleton.iodhsingleton.IoDHThrea
 import com.mightybird.designpattern.creational.singleton.lazysingleton.LazyThread;
 import com.mightybird.designpattern.structural.adapter.Adapter;
 import com.mightybird.designpattern.structural.adapter.Target;
+import com.mightybird.designpattern.structural.bridge.Converter;
+import com.mightybird.designpattern.structural.bridge.ReaderImplementor;
+import com.mightybird.designpattern.structural.composite.safe.*;
+import com.mightybird.designpattern.structural.composite.transparent.*;
+import com.mightybird.designpattern.structural.decorator.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -34,17 +39,87 @@ public class DesignPatternApplication {
         ConfigurableApplicationContext context = SpringApplication.run(DesignPatternApplication.class, args);
 
 //        Creational Clients
-        simpleFactoryClient(context);
-        factoryMethodClient(context);
-        abstractFactoryClient(context);
-        singletonClient();
-        prototypeClient();
-        builderClient(context);
+//        simpleFactoryClient(context);
+//        factoryMethodClient(context);
+//        abstractFactoryClient(context);
+//        singletonClient();
+//        prototypeClient();
+//        builderClient(context);
 
 //        Structural Clients
-        adapterClient(context, "username");
+//        adapterClient(context, "username");
+//        bridgeClient(context);
+//        compositeClient();
+        decoratorClient();
 
 //        Behavioral Clients
+    }
+
+    private static void decoratorClient() {
+        Component component1, component2, shiftLetterEncrypter, reverseEncrypter, modEncrypter;
+        component1 = new Username("MightyBird");
+        shiftLetterEncrypter = new ShiftLetterEncrypter(component1);
+        reverseEncrypter = new ReverseEncrypter(shiftLetterEncrypter);
+        modEncrypter = new ModEncrypter(reverseEncrypter);
+        modEncrypter.show();
+        component2 = new Password("Np@#cvb1689");
+        modEncrypter = new ModEncrypter(component2);
+        reverseEncrypter = new ReverseEncrypter(modEncrypter);
+        shiftLetterEncrypter = new ShiftLetterEncrypter(reverseEncrypter);
+        shiftLetterEncrypter.show();
+    }
+
+    private static void compositeClient() {
+        // Transparent Composite Pattern
+        TransparentComponent tContainer1, tContainer2, tContainer3, tLeaf1, tLeaf2, tLeaf3, tLeaf4;
+        tContainer1 = new TWindow("TWindowRoot");
+        tContainer2 = new TWindow("TWindow");
+        tContainer3 = new TPanel("TPanel");
+        tLeaf1 = new TButton("TButtonInWindow");
+        tLeaf2 = new TTextForm("TTextFormInWindow");
+        tLeaf3 = new TButton("TButtonInPanel");
+        tLeaf4 = new TTextForm("TTextFormInPanel");
+        tContainer2.add(tLeaf1);
+        tContainer2.add(tLeaf2);
+        tContainer3.add(tLeaf3);
+        tContainer3.add(tLeaf4);
+        tContainer1.add(tContainer2);
+        tContainer1.add(tContainer3);
+        tContainer1.operation();
+        // Safe Composite Pattern
+        SafeComponent sLeaf1, sLeaf2, sLeaf3, sLeaf4;
+        SafeContainer sContainer1, sContainer2, sContainer3;
+        sContainer1 = new SPanel("SPanelRoot");
+        sContainer2 = new SWindow("SWindow");
+        sContainer3 = new SPanel("SPanel");
+        sLeaf1 = new SButton("SButtonInWindow");
+        sLeaf2 = new STextForm("STextFormInWindow");
+        sLeaf3 = new SButton("SButtonInPanel");
+        sLeaf4 = new STextForm("STextFormInPanel");
+        sContainer2.add(sLeaf1);
+        sContainer2.add(sLeaf2);
+        sContainer3.add(sLeaf3);
+        sContainer3.add(sLeaf4);
+        sContainer1.add(sContainer2);
+        sContainer1.add(sContainer3);
+        sContainer1.operation();
+    }
+
+    private static void bridgeClient(ConfigurableApplicationContext context) {
+        String converterClassName = context.getEnvironment().getProperty("bridge.converterClassName");
+        String readerClassName = context.getEnvironment().getProperty("bridge.readerClassName");
+        Converter converter = null;
+        try {
+            Class<?> converterClass = Class.forName(converterClassName);
+            converter = (Converter) converterClass.getDeclaredConstructor().newInstance();
+            Class<?> readerClass = Class.forName(readerClassName);
+            ReaderImplementor reader = (ReaderImplementor) readerClass.getDeclaredConstructor().newInstance();
+            converter.setReader(reader);
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        assert converter != null;
+        converter.convert();
     }
 
     private static void adapterClient(ConfigurableApplicationContext context, String str) {
