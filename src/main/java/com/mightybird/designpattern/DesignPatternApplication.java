@@ -25,6 +25,7 @@ import com.mightybird.designpattern.structural.bridge.ReaderImplementor;
 import com.mightybird.designpattern.structural.composite.safe.*;
 import com.mightybird.designpattern.structural.composite.transparent.*;
 import com.mightybird.designpattern.structural.decorator.*;
+import com.mightybird.designpattern.structural.facade.EncryptFacade;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -50,9 +51,15 @@ public class DesignPatternApplication {
 //        adapterClient(context, "username");
 //        bridgeClient(context);
 //        compositeClient();
-        decoratorClient();
+//        decoratorClient();
+        facadeClient();
 
 //        Behavioral Clients
+    }
+
+    private static void facadeClient() {
+        EncryptFacade encryptFacade = new EncryptFacade();
+        encryptFacade.fileEncrypt("SourceFile", "DestinationFile");
     }
 
     private static void decoratorClient() {
